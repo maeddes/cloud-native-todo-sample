@@ -1,5 +1,6 @@
 package de.maeddes.ToDoQueryService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,11 +39,17 @@ public class ToDoQueryServiceApplication {
 	}
 
     @RequestMapping(value = "/todos", method = RequestMethod.GET)
-    public String getItems(){
+    public List<String> getItems(){
 
         System.out.println("In getItems: ");
-        List<ToDoItem> items = toDoItemRepository.findAll();
-        return items.toString();
+		List<ToDoItem> items = toDoItemRepository.findAll();
+		List<String> toDos = new ArrayList<String>();
+		for(int i = 0; i < items.size(); i++){
+
+			boolean add = toDos.add(items.get(i).getDescription());
+
+		}
+        return toDos;
 
 	}
 	
