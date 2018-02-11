@@ -1,6 +1,14 @@
-spring.rabbitmq.host = localhost
-spring.rabbitmq.port = 5672
-spring.rabbitmq.username = admin
-spring.rabbitmq.password = Qo93yelf3uqn
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: Qo93yelf3uqn
 
-server.port=9081
+server:
+  port: 9081
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    instanceId: ${spring.application.name}:${server.port}
