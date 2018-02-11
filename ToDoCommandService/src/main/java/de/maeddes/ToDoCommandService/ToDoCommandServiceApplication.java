@@ -1,12 +1,17 @@
 package de.maeddes.ToDoCommandService;
 
+import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
+import com.netflix.appinfo.InstanceInfo;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,8 +29,11 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class ToDoCommandServiceApplication {
 
-	@Autowired
+    @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     @Autowired
     private Queue queue;
@@ -36,38 +44,12 @@ public class ToDoCommandServiceApplication {
     }
 
     @GetMapping("/test")
-    public String test(){
+    public String test() {
         return "Ok";
     }
 
-    @GetMapping("/testX")
-    public String testX(){
-
-        RestTemplate template = new RestTemplate();
-        String url = "http://localhost:9082/test/";
-        
-        Set<HttpMethod> optionsForAllow = template.optionsForAllow(url);
-        System.out.println(optionsForAllow);
-
-        ResponseEntity<String> response = template.getForEntity(url, String.class);
-        System.out.println("get: "+ response.getBody());
-
-        url = "http://localhost:9082/post/";
-
-        response = template.postForEntity(url, null, String.class);
-        System.out.println("post: "+ response.getBody());
-
-        url = "http://localhost:9082/postParam/TestString";
-
-        response = template.postForEntity(url, null, String.class);
-        System.out.println("post: "+ response.getBody());
-        
-        return "done";
-    }
-
-
     @RequestMapping(value = "/todo/{toDo}", method = RequestMethod.POST)
-    public String addItem(@PathVariable String toDo){
+    public String addItem(@PathVariable String toDo) {
 
         ToDoItem toDoItem = new ToDoItem(toDo, false);
         this.handleRequest(toDoItem);
@@ -76,7 +58,7 @@ public class ToDoCommandServiceApplication {
     }
 
     @RequestMapping(value = "/done/{toDo}", method = RequestMethod.POST)
-    public String setItemDone(@PathVariable String toDo){
+    public String setItemDone(@PathVariable String toDo) {
 
         ToDoItem toDoItem = new ToDoItem(toDo, true);
         this.handleRequest(toDoItem);
@@ -84,33 +66,41 @@ public class ToDoCommandServiceApplication {
 
     }
 
-    private void handleRequest(ToDoItem toDoItem){
+    private void handleRequest(ToDoItem toDoItem) {
 
-        System.out.println("In handleRequest: "+toDoItem);
+        System.out.println("In handleRequest: " + toDoItem);
         this.send(toDoItem.toString());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         RestTemplate template = new RestTemplate();
+        List<ServiceInstance> instances = discoveryClient.getInstances("ToDoQueryService");
 
-        if(!toDoItem.done){
-            String url = "http://localhost:9082/add/"+toDoItem.description;
-            ResponseEntity<String> response = template.postForEntity(url, null, String.class);
-
-            System.out.println(response);
+        URI uri = null;
+        if (instances != null && instances.size() > 0) {
+            uri = instances.get(0).getUri();
         }
-        else if(toDoItem.done){
-            String url = "http://localhost:9082/setDone/"+toDoItem.description;
-            ResponseEntity<String> response = template.postForEntity(url, null, String.class);
+        System.out.println("In handleRequest: URI from Eureka: " + uri.toString());
 
-            System.out.println(response);
+        if (uri != null) {
+            if (!toDoItem.done) {
+                String url = uri + "/add/" + toDoItem.description;
+                ResponseEntity<String> response = template.postForEntity(url, null, String.class);
+
+                System.out.println(response);
+            } else if (toDoItem.done) {
+                String url = uri + "/setDone/" + toDoItem.description;
+                ResponseEntity<String> response = template.postForEntity(url, null, String.class);
+
+                System.out.println(response);
+            }
         }
     }
 
-	public static void main(String[] args) {
-		SpringApplication.run(ToDoCommandServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ToDoCommandServiceApplication.class, args);
+    }
 }
 
 
