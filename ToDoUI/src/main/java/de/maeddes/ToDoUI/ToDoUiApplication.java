@@ -2,9 +2,11 @@ package de.maeddes.ToDoUI;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +15,13 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 @RequestMapping("/")
 @SpringBootApplication
+@EnableDiscoveryClient
 public class ToDoUiApplication {
 
-	@RequestMapping("/test")
+	@GetMapping("/test")
     public String test(){
 
-        return "Ok";
+	    return "Ok";
     }
 
     @RequestMapping(method = RequestMethod.GET)

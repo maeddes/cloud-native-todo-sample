@@ -9,3 +9,8 @@ spring:
 
 server:
   port: 9082
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    instanceId: ${spring.application.name}:${server.port}

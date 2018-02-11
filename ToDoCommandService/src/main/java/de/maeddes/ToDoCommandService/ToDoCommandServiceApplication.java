@@ -37,6 +37,11 @@ public class ToDoCommandServiceApplication {
 
     @GetMapping("/test")
     public String test(){
+        return "Ok";
+    }
+
+    @GetMapping("/testX")
+    public String testX(){
 
         RestTemplate template = new RestTemplate();
         String url = "http://localhost:9082/test/";
@@ -88,10 +93,6 @@ public class ToDoCommandServiceApplication {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         RestTemplate template = new RestTemplate();
-        // MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-        // HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-        // ResponseEntity<String> response = template.exchange(url, HttpMethod.POST, request, String.class);
-        // map.add("toDo", toDoItem.description);
 
         if(!toDoItem.done){
             String url = "http://localhost:9082/add/"+toDoItem.description;
@@ -112,35 +113,4 @@ public class ToDoCommandServiceApplication {
 	}
 }
 
-/* @RabbitListener(queues = "my-queue")
-class ToDoListCommandReceiver {
-
-    @RabbitHandler
-    public void receive(String in) {
-        System.out.println("Received '" + in + "'");
-        if (in.startsWith("done:")) {
-
-            // unsafe hack
-            String id = in.split(":")[1];
-            if (id != null) {
-
-                try {
-                    //this.toDoItemRepository.delete(new Integer(id));
-                } catch (Exception e) {
-                    System.out.println("Exception: " + e);
-                }
-            }
-            return;
-
-        } else {
-
-            try {
-                //this.toDoItemRepository.save(new ToDoItem(in));
-            } catch (Exception e) {
-                System.out.println("Exception: " + e);
-            }
-        }
-    }
-
-} */
 
