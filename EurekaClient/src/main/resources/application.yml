@@ -1,10 +1,12 @@
 spring:
   application:
     name: EurekaClient
-
-spring:
   profiles:
     active: "dev"
+
+security:
+  basic:
+    enabled: false
 
 ---
 
@@ -27,8 +29,6 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
-
-eureka:
   instance:
     leaseRenewalIntervalInSeconds: 5
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -38,6 +38,3 @@ eureka:
 spring:
   profiles: cloud
 
-security:
-  basic:
-    enabled: false
