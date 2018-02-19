@@ -1,7 +1,0 @@
-server:
-  port: 9080
-
-eureka:
-  instance:
-    leaseRenewalIntervalInSeconds: 5
-    instanceId: ${spring.application.name}:${server.port}
