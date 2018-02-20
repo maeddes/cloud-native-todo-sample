@@ -10,17 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @EnableDiscoveryClient
 @RestController
-public class EurekaClientApplication {
+public class EurekaHybridClientApplication {
 
-	@Value("${spring.profiles:none}")
+	@Value("${spring.application.name:unnamed}")
+	String name;
+
+	@Value("${spring.profiles:unset}")
 	String profile;
 
 	@GetMapping("/")
 	public String hello(){
-		return "Hello World running on "+profile;
+		return name+" running on profile"+profile;
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(EurekaClientApplication.class, args);
+		SpringApplication.run(EurekaHybridClientApplication.class, args);
 	}
 }

@@ -1,8 +1,8 @@
 spring:
   application:
-    name: EurekaClient
+    name: EurekaHybridClient
   profiles:
-    active: "dev"
+    active: standalone
 
 security:
   basic:
@@ -11,7 +11,7 @@ security:
 ---
 
 spring:
-  profiles: dev
+  profiles: standalone
 
 eureka:
   client:

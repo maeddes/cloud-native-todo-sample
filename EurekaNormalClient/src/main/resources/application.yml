@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: EurekaNormalClient
+  profiles:
+    active: local
+
+security:
+  basic:
+    enabled: false
+
+---
+
+spring:
+  profiles: standalone
+
+eureka:
+  client:
+    enabled: false
+
+---
+
+spring:
+  profiles: local
+
+server:
+  port: 0
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+---
+
+spring:
+  profiles: cloud
+
