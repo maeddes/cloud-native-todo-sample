@@ -1,0 +1,8 @@
+security:
+  basic:
+    enabled: false
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    instanceId: ${spring.application.name}:${server.port}
