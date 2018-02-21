@@ -1,7 +1,3 @@
-security:
-  basic:
-    enabled: false
-
 spring:
   application:
     name: ToDoUIService
