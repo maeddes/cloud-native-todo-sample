@@ -39,7 +39,7 @@ public class ToDoCommandServiceApplication {
     private Queue queue;
 
     public void send(String message) {
-        this.rabbitTemplate.convertAndSend(queue.getName(), message);
+        //this.rabbitTemplate.convertAndSend(queue.getName(), message);
         System.out.println(" [x] Sent '" + message + "'");
     }
 
